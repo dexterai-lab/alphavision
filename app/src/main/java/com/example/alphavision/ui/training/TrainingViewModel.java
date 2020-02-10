@@ -1,16 +1,16 @@
-package com.example.alphavision.ui.gallery;
+package com.example.alphavision.ui.training;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class GalleryViewModel extends ViewModel {
+public class TrainingViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public GalleryViewModel() {
+    public TrainingViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is gallery fragment");
+        mText.setValue("This is training fragment");
     }
 
     public LiveData<String> getText() {
