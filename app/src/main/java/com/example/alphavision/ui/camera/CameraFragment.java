@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -25,8 +26,17 @@ public class CameraFragment extends Fragment {
         cameraViewModel =
                 ViewModelProviders.of(this).get(CameraViewModel.class);
         View root = inflater.inflate(R.layout.fragment_camera, container, false);
-        Intent intent = new Intent(getActivity(), DetectorActivity.class);
-        startActivity(intent);
+
+        Button buttonDetect = (Button) root.findViewById(R.id.buttonDetect);
+        buttonDetect.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), DetectorActivity.class);
+                intent.putExtra("some","some data");
+                startActivity(intent);
+            }
+        });
+
 //        final TextView textView = root.findViewById(R.id.text_home);
 //        cameraViewModel.getText().observe(this, new Observer<String>() {
 //            @Override
@@ -35,7 +45,5 @@ public class CameraFragment extends Fragment {
 //            }
 //        });
         return root;
-
-
     }
 }
