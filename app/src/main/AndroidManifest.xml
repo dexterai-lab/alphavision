@@ -29,6 +29,7 @@
 
         <activity
             android:name=".DetectorActivity"
+            android:parentActivityName=".MainActivity"
             android:label="@string/menu_home"
             android:screenOrientation="portrait">
         </activity>

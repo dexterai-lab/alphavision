@@ -98,10 +98,19 @@ public abstract class CameraActivity extends AppCompatActivity
     super.onCreate(null);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-    setContentView(R.layout.fragment_camera);
+    setContentView(R.layout.activity_camera);
+
+//    This causes failure if turne on as the fragment toolbar is different from activity toolbar
 //    Toolbar toolbar = findViewById(R.id.toolbar);
 //    setSupportActionBar(toolbar);
-//    getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+    // add back arrow to toolbar
+//    if (getSupportActionBar() != null){
+//      getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//      getSupportActionBar().setDisplayShowHomeEnabled(true);
+//      getSupportActionBar().setDisplayShowTitleEnabled(false);
+//    }
+
 
     if (hasPermission()) {
       setFragment();
