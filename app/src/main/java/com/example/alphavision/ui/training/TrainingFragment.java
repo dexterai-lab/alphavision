@@ -1,5 +1,6 @@
 package com.example.alphavision.ui.training;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
@@ -29,43 +30,27 @@ import static android.app.Activity.RESULT_OK;
 
 public class TrainingFragment extends Fragment {
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_IMAGE_CAPTURE = 989;
+    private Button buttonTakepic;
+    private ImageView imageView;
     private TrainingViewModel trainingViewModel;
 
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         trainingViewModel =
                 ViewModelProviders.of(this).get(TrainingViewModel.class);
         View root = inflater.inflate(R.layout.fragment_gallery, container, false);
 
-        Button buttonTakepic = (Button) root.findViewById(R.id.buttonTakepic);
-        buttonTakepic.setOnClickListener(new View.OnClickListener(){
+        buttonTakepic = (Button) root.findViewById(R.id.buttonTakepic);
+        imageView = (ImageView) root.findViewById(R.id.imageViewPicture);
 
-            private AppCompatImageView imageViewPicture;
-
+        buttonTakepic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
-
-            protected void onActivityResult(int requestCode,int resultCode, Intent data) {
-                if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-                    Bundle extras = data.getExtras();
-                    Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
-                    imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    byte[] byteArray = stream.toByteArray();
-
-                    // convert byte array to Bitmap
-
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0,
-                            byteArray.length);
-                    imageViewPicture.setImageBitmap(bitmap);
-                }
-            }
-
         });
 
         return root;
@@ -73,7 +58,23 @@ public class TrainingFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+
+            Bitmap bmp = (Bitmap) data.getExtras().get("data");
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+
+
+            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0,
+                    byteArray.length);
+
+            imageView.setImageBitmap(bitmap);
+        }
     }
+
+
 }
