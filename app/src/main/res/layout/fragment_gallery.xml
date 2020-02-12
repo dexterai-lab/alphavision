@@ -30,18 +30,52 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewPicture"
-        app:layout_constraintVertical_bias="0.19" />
+        app:layout_constraintVertical_bias="0.815" />
 
     <ImageView
         android:id="@+id/imageViewPicture"
-        android:layout_width="418dp"
-        android:layout_height="591dp"
+        android:layout_width="387dp"
+        android:layout_height="429dp"
         android:layout_marginTop="6dp"
-        android:scaleType="centerCrop"
+        android:scaleType="matrix"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.516"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_gallery"
         app:layout_constraintVertical_bias="0.007" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="134dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="92dp"
+        android:elevation="100dp"
+        android:fadeScrollbars="false"
+        android:max="4"
+        android:progress="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.557"
+        app:layout_constraintStart_toEndOf="@+id/textViewInterval"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewPicture" />
+
+    <TextView
+        android:id="@+id/textViewInterval"
+        android:layout_width="94dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="92dp"
+        android:background="#E0E6C2"
+        android:fontFamily="sans-serif"
+        android:text="Interval"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="18sp"
+        android:typeface="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.164"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewPicture" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -36,6 +36,13 @@
             android:screenOrientation="portrait">
         </activity>
 
+        <activity
+            android:name=".CameraTakePictureActivity"
+            android:parentActivityName=".MainActivity"
+            android:label="@string/menu_home"
+            android:screenOrientation="portrait">
+        </activity>
+
      </application>
 
 </manifest>
