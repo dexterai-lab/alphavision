@@ -1,36 +1,30 @@
 package com.example.alphavision.ui.training;
 
 import android.Manifest;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.params.StreamConfigurationMap;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.util.Log;
-import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.alphavision.CameraActivity;
-import com.example.alphavision.CameraConnectionFragment;
 import com.example.alphavision.CameraHelper;
-import com.example.alphavision.LegacyCameraConnectionFragment;
 import com.example.alphavision.R;
-import com.example.alphavision.env.Logger;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
@@ -40,29 +34,22 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static androidx.constraintlayout.widget.Constraints.TAG;
-
 public class TrainingFragment extends Fragment {
 
-    static final int REQUEST_IMAGE_CAPTURE = 989;
     private static final int REQUEST_CAMERA = 0;
+    private int STORAGE_PERMISSION_CODE = 1;
+    private static final String TAG = "TrainingFragment";
     private Button buttonTakepic;
-    private FrameLayout preview;
-    private static final int PERMISSIONS_REQUEST = 1;
-    private static final Logger LOGGER = new Logger();
-    private boolean useCamera2API;
-    private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
-    private TrainingViewModel trainingViewModel;
-    private String mCurrentPhotoPath;
-    public static final String TAG = "TrainingFragment";
-
-    private View mLayout;
-
-    protected int previewWidth = 0;
-    protected int previewHeight = 0;
-
+    private SeekBar seekBar;
+    private TextView textViewInterval;
     private Camera mCamera;
+    private View mLayout;
     private CameraHelper.CameraPreview mCameraPreview;
+
+    CoordinatorLayout coordinatorLayout;
+    protected int TIMER_INTERVAL = 0;
+    //Set this to set minimum number of images taken at pre-defined interval
+    private int TIMER_INTERVAL_MIN = 1000;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -87,35 +74,62 @@ public class TrainingFragment extends Fragment {
             Log.i(TAG,
                     "CAMERA permission has already been granted. Displaying camera preview.");
 
+            FrameLayout preview = (FrameLayout) root.findViewById(R.id.camera_preview);
+            seekBar = (SeekBar) root.findViewById(R.id.seekBar);
+            textViewInterval = (TextView) root.findViewById(R.id.textViewInterval);
+            buttonTakepic = (Button) root.findViewById(R.id.buttonTakepic);
+
             mCamera = getCameraInstance();
             mCameraPreview = new CameraHelper.CameraPreview(getParentFragment().getContext(), mCamera);
-            FrameLayout preview = (FrameLayout) root.findViewById(R.id.camera_preview);
             preview.addView(mCameraPreview);
+
+//            textViewInterval.setText(seekBar.getProgress());
+            textViewInterval.setText(" " + seekBar.getProgress() + "s" );
+            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    //Read the progress input and use it for purpose
+                    textViewInterval.setText(" "+ (progress+1) + "s");
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
+            buttonTakepic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (ActivityCompat.checkSelfPermission(getContext(),
+                            Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(getActivity(), "You have already granted this permission!",
+                                Toast.LENGTH_SHORT).show();
+
+                        new CountDownTimer(5000, 1000) {
+
+                            @Override
+                            public void onFinish() {
+
+                            }
+
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                mCamera.startPreview();
+                                mCamera.takePicture(null, null, mPicture);
+                            }
+
+                        }.start();
+                    } else {
+                        requestStoragePermission();
+                    }
+                }
+            }); // END_INCLUDE(camera_permission)
         }
-        // END_INCLUDE(camera_permission)
-
-
-
-        buttonTakepic = (Button) root.findViewById(R.id.buttonTakepic);
-        buttonTakepic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new CountDownTimer(5000, 1000) {
-
-                    @Override
-                    public void onFinish() {
-
-                    }
-
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        mCamera.startPreview();
-                        mCamera.takePicture(null, null, mPicture);
-                    }
-
-                }.start();
-            }
-        });
         return root;
     }
 
@@ -187,7 +201,9 @@ public class TrainingFragment extends Fragment {
             // For example if the user has previously denied the permission.
             Log.i(TAG,
                     "Displaying camera permission rationale to provide additional context.");
-            Snackbar.make(mLayout, R.string.permission_camera_rationale,
+            FrameLayout preview = (FrameLayout)  mCameraPreview.findViewById(R.id.camera_preview);
+
+            Snackbar.make(preview , R.string.permission_camera_rationale,
                     Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.ok, new View.OnClickListener() {
                         @Override
@@ -207,4 +223,42 @@ public class TrainingFragment extends Fragment {
         // END_INCLUDE(camera_permission_request)
     }
 
+    private void requestStoragePermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Permission needed")
+                    .setMessage("This permission is needed to store the captured images to the device!")
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(getActivity(),
+                                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+                        }
+                    })
+                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create().show();
+
+        } else {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == STORAGE_PERMISSION_CODE)  {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getContext(), "Permission GRANTED", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 }
