@@ -5,56 +5,49 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <FrameLayout
+        android:id="@+id/camera_preview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+    </FrameLayout>
+
     <Button
         android:id="@+id/buttonTakepic"
         style="@android:style/Widget.Material.Button.Colored"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="59dp"
+        android:layout_height="48dp"
         android:text="Take Picture"
         android:textColorHighlight="#FF5252"
         android:textColorLink="#69F0AE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.94" />
 
     <SeekBar
         android:id="@+id/seekBar"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="32dp"
+        android:layout_width="121dp"
+        android:layout_height="29dp"
         android:elevation="100dp"
         android:fadeScrollbars="false"
         android:max="4"
         android:progress="1"
-        app:layout_constraintBottom_toTopOf="@+id/buttonTakepic"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textViewInterval"
-        app:layout_constraintTop_toBottomOf="@+id/text_gallery" />
-
-    <TextView
-        android:id="@+id/textViewInterval"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="68dp"
-        android:layout_marginTop="524dp"
-        android:layout_marginEnd="64dp"
-        android:layout_marginBottom="140dp"
-        android:background="#FFFFFF"
-        android:fontFamily="sans-serif"
-        android:text="Interval"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="18sp"
-        android:typeface="normal"
-        app:layout_constraintBottom_toBottomOf="@+id/camera_preview"
-        app:layout_constraintEnd_toStartOf="@+id/seekBar"
-        app:layout_constraintStart_toStartOf="@+id/camera_preview"
-        app:layout_constraintTop_toTopOf="@+id/camera_preview" />
+        app:layout_constraintHorizontal_bias="0.84"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.77" />
 
     <TextView
         android:id="@+id/text_gallery"
@@ -71,13 +64,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <FrameLayout
-        android:id="@+id/camera_preview"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+    <TextView
+        android:id="@+id/textViewInterval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:fontFamily="sans-serif"
+        android:text="Interval"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="18sp"
+        android:typeface="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/camera_preview"
+        app:layout_constraintVertical_bias="0.77" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

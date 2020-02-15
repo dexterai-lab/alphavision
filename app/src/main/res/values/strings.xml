@@ -14,4 +14,8 @@
     <string name="menu_tools">Settings</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
+    <string name="permision_available_camera">Camera Permission has been granted. Preview can now be opened.</string>
+    <string name="permissions_not_granted">Permissions were not granted.</string>
+    <string name="permission_camera_rationale">Camera permission is needed to show the camera preview.</string>
+    <string name="ok">OK</string>
 </resources>

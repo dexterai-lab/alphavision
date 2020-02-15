@@ -1,34 +1,38 @@
 package com.example.alphavision.ui.training;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Camera;
-import android.net.Uri;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.params.StreamConfigurationMap;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Size;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 
+import com.example.alphavision.CameraActivity;
+import com.example.alphavision.CameraConnectionFragment;
 import com.example.alphavision.CameraHelper;
-import com.example.alphavision.CameraTakePictureActivity;
-import com.example.alphavision.DetectorActivity;
+import com.example.alphavision.LegacyCameraConnectionFragment;
 import com.example.alphavision.R;
+import com.example.alphavision.env.Logger;
+import com.google.android.material.snackbar.Snackbar;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -36,15 +40,26 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static android.app.Activity.RESULT_OK;
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class TrainingFragment extends Fragment {
 
     static final int REQUEST_IMAGE_CAPTURE = 989;
+    private static final int REQUEST_CAMERA = 0;
     private Button buttonTakepic;
     private FrameLayout preview;
+    private static final int PERMISSIONS_REQUEST = 1;
+    private static final Logger LOGGER = new Logger();
+    private boolean useCamera2API;
+    private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
     private TrainingViewModel trainingViewModel;
     private String mCurrentPhotoPath;
+    public static final String TAG = "TrainingFragment";
+
+    private View mLayout;
+
+    protected int previewWidth = 0;
+    protected int previewHeight = 0;
 
     private Camera mCamera;
     private CameraHelper.CameraPreview mCameraPreview;
@@ -55,11 +70,31 @@ public class TrainingFragment extends Fragment {
 
         super.onCreate(savedInstanceState);
 
+        Log.i(TAG, "Show camera button pressed. Checking permission.");
+
         View root = inflater.inflate(R.layout.fragment_gallery, container, false);
-        mCamera = getCameraInstance();
-        mCameraPreview = new CameraHelper.CameraPreview(getParentFragment().getContext(), mCamera);
-        FrameLayout preview = (FrameLayout) root.findViewById(R.id.camera_preview);
-        preview.addView(mCameraPreview);
+
+        // Check if the Camera permission is already available.
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Camera permission has not been granted.
+
+            requestCameraPermission();
+
+        } else {
+
+            // Camera permissions is already available, show the camera preview.
+            Log.i(TAG,
+                    "CAMERA permission has already been granted. Displaying camera preview.");
+
+            mCamera = getCameraInstance();
+            mCameraPreview = new CameraHelper.CameraPreview(getParentFragment().getContext(), mCamera);
+            FrameLayout preview = (FrameLayout) root.findViewById(R.id.camera_preview);
+            preview.addView(mCameraPreview);
+        }
+        // END_INCLUDE(camera_permission)
+
+
 
         buttonTakepic = (Button) root.findViewById(R.id.buttonTakepic);
         buttonTakepic.setOnClickListener(new View.OnClickListener() {
@@ -123,10 +158,11 @@ public class TrainingFragment extends Fragment {
         File mediaStorageDir = new File(
                 Environment
                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                "MyCameraApp");
+                "AlphaVision");
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
-                Log.d("MyCameraApp", "failed to create directory");
+                Log.d("MainActivity", "Media storage dir is: " + mediaStorageDir.getPath());
+                Log.d("AlphaVision", "failed to create directory");
                 return null;
             }
         }
@@ -140,75 +176,35 @@ public class TrainingFragment extends Fragment {
         return mediaFile;
     }
 
+    private void requestCameraPermission() {
+        Log.i(TAG, "CAMERA permission has NOT been granted. Requesting permission.");
+
+        // BEGIN_INCLUDE(camera_permission_request)
+        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                Manifest.permission.CAMERA)) {
+            // Provide an additional rationale to the user if the permission was not granted
+            // and the user would benefit from additional context for the use of the permission.
+            // For example if the user has previously denied the permission.
+            Log.i(TAG,
+                    "Displaying camera permission rationale to provide additional context.");
+            Snackbar.make(mLayout, R.string.permission_camera_rationale,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityCompat.requestPermissions(getActivity(),
+                                    new String[]{Manifest.permission.CAMERA},
+                                    REQUEST_CAMERA);
+                        }
+                    })
+                    .show();
+        } else {
+
+            // Camera permission has not been granted yet. Request it directly.
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
+                    REQUEST_CAMERA);
+        }
+        // END_INCLUDE(camera_permission_request)
+    }
 
 }
-
-
-
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//
-//            File imgFile = new File(mCurrentPhotoPath);
-//            if (imgFile.exists()) {
-//                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-//                imageView.setImageBitmap(myBitmap);
-//            }
-//            Bundle extras = data.getExtras();
-//
-//            Bitmap bmp = (Bitmap) data.getExtras().get("data");
-//            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//
-//            bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-//            byte[] byteArray = stream.toByteArray();
-//
-//
-//            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0,
-//                    byteArray.length);
-//
-//            imageView.setImageBitmap(bitmap);
-//        }
-//    }
-
-
-//    private File createImageFile() throws IOException {
-//        // Create an image file name
-//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//        String imageFileName = "JPEG_" + timeStamp + "_";
-//        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-//        File image = File.createTempFile(
-//                imageFileName,  /* prefix */
-//                ".jpg",         /* suffix */
-//                storageDir      /* directory */
-//        );
-//
-//        // Save a file: path for use with ACTION_VIEW intents
-//        mCurrentPhotoPath = image.getAbsolutePath();
-//        return image;
-//    }
-
-//    private void dispatchTakePictureIntent() {
-//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        // Ensure that there's a camera activity to handle the intent
-//        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-//            // Create the File where the photo should go
-//            File photoFile = null;
-//            try {
-//                photoFile = createImageFile();
-//            } catch (IOException ex) {
-//                // Error occurred while creating the File
-//
-//            }
-//            // Continue only if the File was successfully created
-//            if (photoFile != null) {
-//                Uri photoURI = FileProvider.getUriForFile(this,
-//                        "com.example.android.fileprovider",
-//                        photoFile);
-//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-//                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-//            }
-//        }
-//    }
-
