@@ -1,10 +1,13 @@
 package com.example.alphavision;
 
 import java.io.IOException;
+
 import android.content.Context;
 import android.hardware.Camera;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.example.alphavision.ui.training.TrainingFragment;
 
 
 public class CameraHelper {
