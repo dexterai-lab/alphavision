@@ -173,11 +173,13 @@ public class TrainingFragment extends Fragment {
                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 "AlphaVision");
         if (!mediaStorageDir.exists()) {
+            Log.d("AlphaVision", "Directory does not exist.");
             if (!mediaStorageDir.mkdirs()) {
                 Log.d("MainActivity", "Media storage dir is: " + mediaStorageDir.getPath());
                 Log.d("AlphaVision", "failed to create directory");
                 return null;
             }
+
         }
         // Create a media file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
@@ -185,6 +187,7 @@ public class TrainingFragment extends Fragment {
         File mediaFile;
         mediaFile = new File(mediaStorageDir.getPath() + File.separator
                 + "IMG_" + timeStamp + ".jpg");
+        Log.d("MainActivity", "Media storage filename is: " + mediaFile);
 
         return mediaFile;
     }
@@ -224,7 +227,7 @@ public class TrainingFragment extends Fragment {
 
     private void requestStoragePermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
             new AlertDialog.Builder(getContext())
                     .setTitle("Permission needed")
@@ -233,7 +236,7 @@ public class TrainingFragment extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             ActivityCompat.requestPermissions(getActivity(),
-                                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+                                    new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
                         }
                     })
                     .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -246,7 +249,7 @@ public class TrainingFragment extends Fragment {
 
         } else {
             ActivityCompat.requestPermissions(getActivity(),
-                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+                    new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
         }
     }
 
@@ -259,5 +262,6 @@ public class TrainingFragment extends Fragment {
                 Toast.makeText(getContext(), "Permission DENIED", Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 }
