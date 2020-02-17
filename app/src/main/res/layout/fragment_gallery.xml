@@ -19,6 +19,40 @@
 
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/textViewName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/camera_preview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/camera_preview"
+        app:layout_constraintVertical_bias="0.85" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
+        android:layout_width="226dp"
+        android:layout_height="37dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.84"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.85">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="28dp"
+            android:background="#1BFFFFFF"
+            android:hint="@string/hint_text_input_object_name"
+            android:inputType="textPersonName"
+            android:textColor="#D32F2F" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <Button
         android:id="@+id/buttonTakepic"
         style="@android:style/Widget.Material.Button.Colored"
@@ -31,15 +65,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.94" />
+        app:layout_constraintVertical_bias="0.97" />
 
     <SeekBar
         android:id="@+id/seekBar"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="121dp"
-        android:layout_height="29dp"
+        style="@android:style/Widget.Material.SeekBar.Discrete"
+        android:layout_width="198dp"
+        android:layout_height="31dp"
+        android:backgroundTintMode="add"
         android:elevation="100dp"
         android:fadeScrollbars="false"
+        android:hapticFeedbackEnabled="true"
         android:max="4"
         android:progress="0"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -93,7 +129,7 @@
         android:typeface="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/camera_preview"
         app:layout_constraintVertical_bias="0.77" />

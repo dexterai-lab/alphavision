@@ -43,7 +43,6 @@ public class TrainingFragment extends Fragment {
     private SeekBar seekBar;
     private TextView textViewInterval;
     private Camera mCamera;
-    private View mLayout;
     private CameraHelper.CameraPreview mCameraPreview;
 
     CoordinatorLayout coordinatorLayout;

@@ -18,4 +18,6 @@
     <string name="permissions_not_granted">Permissions were not granted.</string>
     <string name="permission_camera_rationale">Camera permission is needed to show the camera preview.</string>
     <string name="ok">OK</string>
+    <string name="hint_text_input_object_name">Type name of object/face</string>
+
 </resources>
