@@ -19,5 +19,7 @@
     <string name="permission_camera_rationale">Camera permission is needed to show the camera preview.</string>
     <string name="ok">OK</string>
     <string name="hint_text_input_object_name">Type name of object/face</string>
+    <string name="hint_text_input_no_of_samples">Input number of samples</string>
+
 
 </resources>

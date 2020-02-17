@@ -21,8 +21,8 @@
 
     <TextView
         android:id="@+id/textViewName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="53dp"
+        android:layout_height="26dp"
         android:text="Name"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
@@ -31,20 +31,40 @@
         app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/camera_preview"
-        app:layout_constraintVertical_bias="0.85" />
+        app:layout_constraintVertical_bias="0.74" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
+        android:id="@+id/textInputLayoutSamples"
+        android:layout_width="140dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewSamples"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutName"
+        app:layout_constraintVertical_bias="0.100000024">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/TextInputSamples"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:background="#1BFFFFFF"
+            android:hint="@string/hint_text_input_no_of_samples"
+            android:text="5"
+            android:textColor="#D32F2F" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutName"
         android:layout_width="226dp"
         android:layout_height="37dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.84"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewName"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.85">
+        app:layout_constraintVertical_bias="0.74">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/TextInputName"
             android:layout_width="match_parent"
             android:layout_height="28dp"
             android:background="#1BFFFFFF"
@@ -83,7 +103,7 @@
         app:layout_constraintHorizontal_bias="0.7"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.77" />
+        app:layout_constraintVertical_bias="0.88" />
 
     <TextView
         android:id="@+id/textViewInterval"
@@ -97,7 +117,21 @@
         app:layout_constraintHorizontal_bias="0.62"
         app:layout_constraintStart_toEndOf="@+id/seekBar"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.77" />
+        app:layout_constraintVertical_bias="0.88" />
+
+    <TextView
+        android:id="@+id/textViewSamples"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Training Samples"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/camera_preview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.13"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.81" />
 
     <TextView
         android:id="@+id/text_gallery"
@@ -132,6 +166,6 @@
         app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/camera_preview"
-        app:layout_constraintVertical_bias="0.77" />
+        app:layout_constraintVertical_bias="0.87" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

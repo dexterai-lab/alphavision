@@ -26,6 +26,8 @@ import androidx.fragment.app.Fragment;
 import com.example.alphavision.CameraHelper;
 import com.example.alphavision.R;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,6 +44,9 @@ public class TrainingFragment extends Fragment {
     private Button buttonTakepic;
     private SeekBar seekBar;
     private TextView textViewInterval;
+    private TextInputEditText textInputName;
+    private TextInputEditText textInputSamples;
+    private int NUM_OF_SAMPLES = 0;
     private Camera mCamera;
     private CameraHelper.CameraPreview mCameraPreview;
 
@@ -76,6 +81,8 @@ public class TrainingFragment extends Fragment {
             FrameLayout preview = (FrameLayout) root.findViewById(R.id.camera_preview);
             seekBar = (SeekBar) root.findViewById(R.id.seekBar);
             textViewInterval = (TextView) root.findViewById(R.id.textViewInterval);
+            textInputName =  (TextInputEditText) root.findViewById(R.id.TextInputName);
+            textInputSamples =  (TextInputEditText) root.findViewById(R.id.TextInputSamples);
             buttonTakepic = (Button) root.findViewById(R.id.buttonTakepic);
 
             mCamera = getCameraInstance();
@@ -84,11 +91,17 @@ public class TrainingFragment extends Fragment {
 
 //            textViewInterval.setText(seekBar.getProgress());
             textViewInterval.setText(" " + seekBar.getProgress() + "s" );
+
+            NUM_OF_SAMPLES = (Integer.parseInt(textInputSamples.getText().toString().trim()))*1000;
+            Log.d("MainActivity", "Number of samples: " + NUM_OF_SAMPLES);
+
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     //Read the progress input and use it for purpose
                     textViewInterval.setText(" "+ (progress+1) + "s");
+                    TIMER_INTERVAL=(progress+1)*1000;
+                    Log.d("MainActivity", "Timer interval: " + TIMER_INTERVAL);
                 }
 
                 @Override
@@ -109,11 +122,11 @@ public class TrainingFragment extends Fragment {
                         Toast.makeText(getActivity(), "You have already granted this permission!",
                                 Toast.LENGTH_SHORT).show();
 
-                        new CountDownTimer(5000, 1000) {
+                        new CountDownTimer(NUM_OF_SAMPLES, TIMER_INTERVAL) {
 
                             @Override
                             public void onFinish() {
-
+                                mCamera.startPreview();
                             }
 
                             @Override
