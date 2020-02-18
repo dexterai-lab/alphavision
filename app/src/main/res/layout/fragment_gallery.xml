@@ -37,7 +37,6 @@
         android:id="@+id/textViewCountdown"
         android:layout_width="340dp"
         android:layout_height="338dp"
-        android:text="text"
         android:textAlignment="center"
         android:textColor="#667986CB"
         android:textSize="200sp"

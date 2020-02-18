@@ -44,6 +44,7 @@ public class TrainingFragment extends Fragment {
     private Button buttonTakepic;
     private SeekBar seekBar;
     private TextView textViewInterval;
+    private TextView textViewCountdown;
     private TextInputEditText textInputName;
     private TextInputEditText textInputSamples;
     private int NUM_OF_SAMPLES = 0;
@@ -81,6 +82,7 @@ public class TrainingFragment extends Fragment {
             FrameLayout preview = (FrameLayout) root.findViewById(R.id.camera_preview);
             seekBar = (SeekBar) root.findViewById(R.id.seekBar);
             textViewInterval = (TextView) root.findViewById(R.id.textViewInterval);
+            textViewCountdown = (TextView) root.findViewById(R.id.textViewCountdown);
             textInputName =  (TextInputEditText) root.findViewById(R.id.TextInputName);
             textInputSamples =  (TextInputEditText) root.findViewById(R.id.TextInputSamples);
             buttonTakepic = (Button) root.findViewById(R.id.buttonTakepic);
@@ -92,8 +94,7 @@ public class TrainingFragment extends Fragment {
 //            textViewInterval.setText(seekBar.getProgress());
             textViewInterval.setText(" " + seekBar.getProgress() + "s" );
 
-            NUM_OF_SAMPLES = (Integer.parseInt(textInputSamples.getText().toString().trim()))*1000;
-            Log.d("MainActivity", "Number of samples: " + NUM_OF_SAMPLES);
+
 
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
@@ -122,17 +123,26 @@ public class TrainingFragment extends Fragment {
                         Toast.makeText(getActivity(), "You have already granted this permission!",
                                 Toast.LENGTH_SHORT).show();
 
-                        new CountDownTimer(NUM_OF_SAMPLES, TIMER_INTERVAL) {
+                        NUM_OF_SAMPLES = (Integer.parseInt(textInputSamples.getText().toString().trim()))*1000;
+                        Log.d("MainActivity", "Number of samples: " + NUM_OF_SAMPLES);
+                        CountDownTimer start = new CountDownTimer(NUM_OF_SAMPLES, TIMER_INTERVAL) {
+
+                            private Long COUNTDOWN;
 
                             @Override
                             public void onFinish() {
                                 mCamera.startPreview();
+                                textViewCountdown.setVisibility(View.INVISIBLE);
                             }
 
                             @Override
                             public void onTick(long millisUntilFinished) {
                                 mCamera.startPreview();
+                                textViewCountdown.setVisibility(View.VISIBLE);
+                                COUNTDOWN = (millisUntilFinished / TIMER_INTERVAL) + 1;
+                                textViewCountdown.setText(String.valueOf(COUNTDOWN));
                                 mCamera.takePicture(null, null, mPicture);
+                                COUNTDOWN -= 1;
                             }
 
                         }.start();
