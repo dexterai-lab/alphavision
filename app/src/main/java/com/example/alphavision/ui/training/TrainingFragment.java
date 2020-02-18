@@ -237,7 +237,7 @@ public class TrainingFragment extends Fragment {
                 .format(new Date());
         File mediaFile;
         mediaFile = new File(mediaStorageDir.getPath() + File.separator
-                + "IMG_" + timeStamp + ".jpg");
+                + "IMG_" + textInputName.getText() + "_" + timeStamp + ".jpg");
         Log.d("MainActivity", "Media storage filename is: " + mediaFile);
 
         return mediaFile;
