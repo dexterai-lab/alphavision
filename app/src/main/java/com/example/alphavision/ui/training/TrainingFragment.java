@@ -35,17 +35,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TrainingFragment extends Fragment {
 
     private static final int REQUEST_CAMERA = 0;
+    private static TextInputEditText textInputName;
     private int STORAGE_PERMISSION_CODE = 1;
     private static final String TAG = "TrainingFragment";
     private Button buttonTakepic;
     private SeekBar seekBar;
     private TextView textViewInterval;
     private TextView textViewCountdown;
-    private TextInputEditText textInputName;
+//    private TextInputEditText textInputName;
     private TextInputEditText textInputSamples;
     private int NUM_OF_SAMPLES = 0;
     private Camera mCamera;
@@ -99,9 +102,11 @@ public class TrainingFragment extends Fragment {
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    int sum_progress = progress + 1;
                     //Read the progress input and use it for purpose
-                    textViewInterval.setText(" "+ (progress+1) + "s");
-                    TIMER_INTERVAL=(progress+1)*1000;
+                    textViewInterval.setText(" "+ sum_progress + "s");
+                    //BUG:Check why it starts with zero!
+                    TIMER_INTERVAL=(progress +1) * 1000;
                     Log.d("MainActivity", "Timer interval: " + TIMER_INTERVAL);
                 }
 
@@ -123,29 +128,43 @@ public class TrainingFragment extends Fragment {
                         Toast.makeText(getActivity(), "You have already granted this permission!",
                                 Toast.LENGTH_SHORT).show();
 
-                        NUM_OF_SAMPLES = (Integer.parseInt(textInputSamples.getText().toString().trim()))*1000;
-                        Log.d("MainActivity", "Number of samples: " + NUM_OF_SAMPLES);
-                        CountDownTimer start = new CountDownTimer(NUM_OF_SAMPLES, TIMER_INTERVAL) {
-
-                            private Long COUNTDOWN;
-
-                            @Override
-                            public void onFinish() {
-                                mCamera.startPreview();
-                                textViewCountdown.setVisibility(View.INVISIBLE);
+                        final String name = textInputName.getText().toString();
+                        if(name.matches("")){
+                            textInputName.setError("This field cannot be empty!");
+                            return;
+                        }
+                        else{
+                            if(!isValidName(name)){
+                                textInputName.setError("Invalid name, remove special characters!");
+                                return;
                             }
+                            else{
+                                NUM_OF_SAMPLES = (Integer.parseInt(textInputSamples.getText().toString().trim()))*1000;
+                                Log.d("MainActivity", "Number of samples: " + NUM_OF_SAMPLES);
+                                CountDownTimer start = new CountDownTimer(NUM_OF_SAMPLES, TIMER_INTERVAL) {
 
-                            @Override
-                            public void onTick(long millisUntilFinished) {
-                                mCamera.startPreview();
-                                textViewCountdown.setVisibility(View.VISIBLE);
-                                COUNTDOWN = (millisUntilFinished / TIMER_INTERVAL) + 1;
-                                textViewCountdown.setText(String.valueOf(COUNTDOWN));
-                                mCamera.takePicture(null, null, mPicture);
-                                COUNTDOWN -= 1;
+                                    private Long COUNTDOWN;
+
+                                    @Override
+                                    public void onFinish() {
+                                        mCamera.startPreview();
+                                        textViewCountdown.setVisibility(View.INVISIBLE);
+                                    }
+
+                                    @Override
+                                    public void onTick(long millisUntilFinished) {
+                                        mCamera.startPreview();
+                                        textViewCountdown.setVisibility(View.VISIBLE);
+                                        /* TODO: Handle divide by zero */
+                                        COUNTDOWN = (millisUntilFinished / TIMER_INTERVAL) + 1;
+                                        textViewCountdown.setText(String.valueOf(COUNTDOWN));
+                                        mCamera.takePicture(null, null, mPicture);
+                                        COUNTDOWN -= 1;
+                                    }
+
+                                }.start();
                             }
-
-                        }.start();
+                        }
                     } else {
                         requestStoragePermission();
                     }
@@ -190,11 +209,20 @@ public class TrainingFragment extends Fragment {
 
     };
 
+
+    // validating name
+    private boolean isValidName(String name) {
+        String name_pattern = "^[a-zA-Z\\\\s]+";
+        Pattern pattern = Pattern.compile(name_pattern);
+        Matcher matcher = pattern.matcher(name);
+        return matcher.matches();
+    }
+
     private static File getOutputMediaFile() {
         File mediaStorageDir = new File(
                 Environment
                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                "AlphaVision");
+                "AlphaVision/" + textInputName.getText());
         if (!mediaStorageDir.exists()) {
             Log.d("AlphaVision", "Directory does not exist.");
             if (!mediaStorageDir.mkdirs()) {
