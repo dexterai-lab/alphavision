@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.alphavision">
+    package="com.dexterai.sightable">
 
     <uses-sdk />
 
@@ -22,7 +22,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.dexterai.sightable.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -32,8 +32,8 @@
         </activity>
 
         <activity
-            android:name=".DetectorActivity"
-            android:parentActivityName=".MainActivity"
+            android:name="com.dexterai.sightable.DetectorActivity"
+            android:parentActivityName="com.dexterai.sightable.MainActivity"
             android:label="@string/menu_home"
             android:screenOrientation="portrait">
         </activity>

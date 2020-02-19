@@ -17,19 +17,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.alphavision.customview.AutoFitTextureView
+    <com.dexterai.sightable.customview.AutoFitTextureView
         android:id="@+id/texture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" />
 
-    <com.example.alphavision.customview.RecognitionScoreView
+    <com.dexterai.sightable.customview.RecognitionScoreView
         android:id="@+id/results"
         android:layout_width="match_parent"
         android:layout_height="112dp"
         android:layout_alignParentTop="true" />
 
-    <com.example.alphavision.customview.OverlayView
+    <com.dexterai.sightable.customview.OverlayView
         android:id="@+id/debug_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

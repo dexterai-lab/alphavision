@@ -5,7 +5,7 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
     defaultConfig {
-        applicationId "com.example.alphavision"
+        applicationId "com.dexterai.sightable"
         minSdkVersion 26
         targetSdkVersion 29
         versionCode 1
