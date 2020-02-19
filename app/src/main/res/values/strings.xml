@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Alpha Vision</string>
+    <string name="app_name">Sightable</string>
     <string name="request_permission">This app needs camera permission.</string>
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
