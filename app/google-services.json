@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1059909221779",
+    "firebase_url": "https://sightable-d33ba.firebaseio.com",
+    "project_id": "sightable-d33ba",
+    "storage_bucket": "sightable-d33ba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1059909221779:android:9eb05df3865096b2f9bc66",
+        "android_client_info": {
+          "package_name": "com.dexterai.sightable"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1059909221779-hpqfsvq79vqm5bsqi3k5d3frn7gcet49.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dexterai.sightable",
+            "certificate_hash": "bf0706319cae42e501ed229123b4b9664a67d307"
+          }
+        },
+        {
+          "client_id": "1059909221779-h11snvbl8p469joghsnegncn0jrjjf2e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEGrREtjxguilbsYWmuuj2u9mj0rpOJN0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1059909221779-h11snvbl8p469joghsnegncn0jrjjf2e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
