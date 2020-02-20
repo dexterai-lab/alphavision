@@ -2,9 +2,11 @@ package com.dexterai.sightable.ui.training;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -19,44 +21,50 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.dexterai.sightable.CameraHelper;
 import com.dexterai.sightable.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TrainingFragment extends Fragment {
 
     private static final int REQUEST_CAMERA = 0;
-    private static TextInputEditText textInputName;
     private int STORAGE_PERMISSION_CODE = 1;
     private static final String TAG = "TrainingFragment";
-    private Button buttonTakepic;
+    private Button buttonTakepic,  buttonTrain;
     private SeekBar seekBar;
-    private TextView textViewInterval;
-    private TextView textViewCountdown;
-//    private TextInputEditText textInputName;
-    private TextInputEditText textInputSamples;
+    private TextView textViewInterval,textViewCountdown;
+    private static TextInputEditText textInputName, textInputSamples;
     private int NUM_OF_SAMPLES = 0;
+    protected int TIMER_INTERVAL = 0;
     private Camera mCamera;
     private CameraHelper.CameraPreview mCameraPreview;
 
-    CoordinatorLayout coordinatorLayout;
-    protected int TIMER_INTERVAL = 0;
-    //Set this to set minimum number of images taken at pre-defined interval
-    private int TIMER_INTERVAL_MIN = 1000;
+    private ArrayList<Uri> ImageList = new ArrayList<Uri>();
+
+    //Firebase
+    FirebaseStorage storage;
+    StorageReference storageReference;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -88,6 +96,11 @@ public class TrainingFragment extends Fragment {
             textInputName =  (TextInputEditText) root.findViewById(R.id.TextInputName);
             textInputSamples =  (TextInputEditText) root.findViewById(R.id.TextInputSamples);
             buttonTakepic = (Button) root.findViewById(R.id.buttonTakepic);
+            buttonTrain = (Button) root.findViewById(R.id.buttonTrain);
+
+            //Get Firebase References
+            storage = FirebaseStorage.getInstance();
+            storageReference = storage.getReference();
 
             mCamera = getCameraInstance();
             mCameraPreview = new CameraHelper.CameraPreview(getParentFragment().getContext(), mCamera);
@@ -106,7 +119,7 @@ public class TrainingFragment extends Fragment {
                     textViewInterval.setText(" "+ sum_progress + "s");
                     //BUG:Check why it starts with zero!
                     TIMER_INTERVAL=(progress +1) * 1000;
-                    Log.d("MainActivity", "Timer interval: " + TIMER_INTERVAL);
+                    Log.d("TrainingFragment", "Timer interval: " + TIMER_INTERVAL);
                 }
 
                 @Override
@@ -139,7 +152,7 @@ public class TrainingFragment extends Fragment {
                             }
                             else{
                                 NUM_OF_SAMPLES = (Integer.parseInt(textInputSamples.getText().toString().trim()))*1000;
-                                Log.d("MainActivity", "Number of samples: " + NUM_OF_SAMPLES);
+                                Log.d("TrainingFragment", "Number of samples: " + NUM_OF_SAMPLES);
                                 CountDownTimer start = new CountDownTimer(NUM_OF_SAMPLES, TIMER_INTERVAL) {
 
                                     private Long COUNTDOWN;
@@ -169,9 +182,17 @@ public class TrainingFragment extends Fragment {
                     }
                 }
             }); // END_INCLUDE(camera_permission)
+
+            buttonTrain.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    uploadTrainingData();
+                }
+            });
         }
         return root;
     }
+
 
     /**
      * Helper method to access the camera returns null if it cannot get the
@@ -221,12 +242,12 @@ public class TrainingFragment extends Fragment {
         File mediaStorageDir = new File(
                 Environment
                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                "AlphaVision/" + textInputName.getText());
+                "Sightable/" + textInputName.getText());
         if (!mediaStorageDir.exists()) {
-            Log.d("AlphaVision", "Directory does not exist.");
+            Log.d("TrainingFragment", "Directory does not exist.");
             if (!mediaStorageDir.mkdirs()) {
-                Log.d("MainActivity", "Media storage dir is: " + mediaStorageDir.getPath());
-                Log.d("AlphaVision", "failed to create directory");
+                Log.d("TrainingFragment", "Media storage dir is: " + mediaStorageDir.getPath());
+                Log.d("TrainingFragment", "failed to create directory");
                 return null;
             }
 
@@ -237,9 +258,56 @@ public class TrainingFragment extends Fragment {
         File mediaFile;
         mediaFile = new File(mediaStorageDir.getPath() + File.separator
                 + "IMG_" + textInputName.getText() + "_" + timeStamp + ".jpg");
-        Log.d("MainActivity", "Media storage filename is: " + mediaFile);
+        Log.d("TrainingFragment", "Media storage filename is: " + mediaFile);
 
         return mediaFile;
+    }
+
+    private void uploadTrainingData() {
+
+        File folder = new File(Environment
+                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                "Sightable/" + textInputName.getText());
+
+        for (File file : folder.listFiles()) {
+            Log.d("TrainingFragment", "Image file location: " + Uri.fromFile(file));
+            ImageList.add(Uri.fromFile(file));
+        }
+
+        if(ImageList != null)
+        {
+            final ProgressDialog progressDialog = new ProgressDialog(getContext());
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+            int upload_count;
+
+            for(upload_count=0; upload_count < ImageList.size(); upload_count++){
+                Uri IndividualImage = ImageList.get(upload_count);
+                StorageReference ImageName = storageReference.child("images/"+ textInputName.getText() + "/" +IndividualImage.getLastPathSegment());
+                ImageName.putFile(IndividualImage)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
+                            Toast.makeText(getContext(), "Uploaded", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(getContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                                    .getTotalByteCount());
+                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                        }
+                    }) ;
+        }}
     }
 
     private void requestCameraPermission() {
