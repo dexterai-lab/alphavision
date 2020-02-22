@@ -25,9 +25,9 @@
 
     <fragment
         android:id="@+id/nav_tools"
-        android:name="com.dexterai.sightable.ui.tools.ToolsFragment"
+        android:name="com.dexterai.sightable.ui.settings.SettingsFragment"
         android:label="@string/menu_tools"
-        tools:layout="@layout/fragment_tools" />
+        tools:layout="@layout/fragment_settings" />
 
     <fragment
         android:id="@+id/nav_share"

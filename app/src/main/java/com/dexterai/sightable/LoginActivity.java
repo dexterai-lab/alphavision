@@ -35,6 +35,8 @@ public class LoginActivity extends AppCompatActivity {
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
+                        .setTheme(R.style.Theme_AppCompat_DayNight_NoActionBar)
+                        .setLogo(R.drawable.logo)
                         .build(),
                 RC_SIGN_IN);
     }

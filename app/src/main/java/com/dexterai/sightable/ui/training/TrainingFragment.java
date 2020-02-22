@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +58,7 @@ public class TrainingFragment extends Fragment {
     private static TextInputEditText textInputName, textInputSamples;
     private int NUM_OF_SAMPLES = 0;
     protected int TIMER_INTERVAL = 1000;
+    private int sum_progress = 1;
     private Camera mCamera;
     private CameraHelper.CameraPreview mCameraPreview;
 
@@ -97,6 +100,8 @@ public class TrainingFragment extends Fragment {
             buttonTakepic = (Button) root.findViewById(R.id.buttonTakepic);
             buttonTrain = (Button) root.findViewById(R.id.buttonTrain);
 
+            buttonTrain.setEnabled(false);
+
             //Get Firebase References
             storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
@@ -111,7 +116,7 @@ public class TrainingFragment extends Fragment {
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    int sum_progress = (progress + 1);
+                    sum_progress = (progress + 1);
                     //Read the progress input and use it for purpose
                     textViewInterval.setText(" "+ sum_progress + "s");
                     //BUG:Check why it starts with zero!
@@ -148,7 +153,8 @@ public class TrainingFragment extends Fragment {
                                 return;
                             }
                             else{
-                                NUM_OF_SAMPLES = (Integer.parseInt(textInputSamples.getText().toString().trim()))*1000;
+                                int factor = (seekBar.getProgress()+1)*1000;
+                                NUM_OF_SAMPLES = (Integer.parseInt(textInputSamples.getText().toString().trim()))*factor;
                                 Log.d("TrainingFragment", "Number of samples: " + NUM_OF_SAMPLES);
                                 Log.d("TrainingFragment", "Timer int inside timers: " + TIMER_INTERVAL);
                                 CountDownTimer start = new CountDownTimer(NUM_OF_SAMPLES, TIMER_INTERVAL) {
@@ -180,6 +186,32 @@ public class TrainingFragment extends Fragment {
                     }
                 }
             }); // END_INCLUDE(camera_permission)
+
+            textInputName.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    if(s.toString().trim().length()==0){
+                        buttonTrain.setEnabled(false);
+                    } else {
+                        buttonTrain.setEnabled(true);
+                    }
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if(s.toString().trim().length()==0){
+                        buttonTrain.setEnabled(false);
+                    } else {
+                        buttonTrain.setEnabled(true);
+                    }
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
 
             buttonTrain.setOnClickListener(new View.OnClickListener() {
                 @Override
