@@ -8,7 +8,7 @@ android {
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.dexterai.sightable"
-        minSdkVersion 26
+        minSdkVersion 25
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -66,4 +66,5 @@ dependencies {
     implementation 'com.twitter.sdk.android:twitter-core:3.3.0'
 
     implementation 'com.google.firebase:firebase-storage:19.1.1'
+
 }

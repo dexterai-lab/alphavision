@@ -42,7 +42,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,7 +55,7 @@ public class TrainingFragment extends Fragment {
     private TextView textViewInterval,textViewCountdown;
     private static TextInputEditText textInputName, textInputSamples;
     private int NUM_OF_SAMPLES = 0;
-    protected int TIMER_INTERVAL = 0;
+    protected int TIMER_INTERVAL = 1000;
     private Camera mCamera;
     private CameraHelper.CameraPreview mCameraPreview;
 
@@ -74,7 +73,7 @@ public class TrainingFragment extends Fragment {
 
         Log.i(TAG, "Show camera button pressed. Checking permission.");
 
-        View root = inflater.inflate(R.layout.fragment_gallery, container, false);
+        View root = inflater.inflate(R.layout.fragment_training, container, false);
 
         // Check if the Camera permission is already available.
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
@@ -107,18 +106,16 @@ public class TrainingFragment extends Fragment {
             preview.addView(mCameraPreview);
 
 //            textViewInterval.setText(seekBar.getProgress());
-            textViewInterval.setText(" " + seekBar.getProgress() + "s" );
-
-
+            textViewInterval.setText(" " + (seekBar.getProgress()+1) + "s" );
 
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    int sum_progress = progress + 1;
+                    int sum_progress = (progress + 1);
                     //Read the progress input and use it for purpose
                     textViewInterval.setText(" "+ sum_progress + "s");
                     //BUG:Check why it starts with zero!
-                    TIMER_INTERVAL=(progress +1) * 1000;
+                    TIMER_INTERVAL = sum_progress * 1000;
                     Log.d("TrainingFragment", "Timer interval: " + TIMER_INTERVAL);
                 }
 
@@ -153,6 +150,7 @@ public class TrainingFragment extends Fragment {
                             else{
                                 NUM_OF_SAMPLES = (Integer.parseInt(textInputSamples.getText().toString().trim()))*1000;
                                 Log.d("TrainingFragment", "Number of samples: " + NUM_OF_SAMPLES);
+                                Log.d("TrainingFragment", "Timer int inside timers: " + TIMER_INTERVAL);
                                 CountDownTimer start = new CountDownTimer(NUM_OF_SAMPLES, TIMER_INTERVAL) {
 
                                     private Long COUNTDOWN;
