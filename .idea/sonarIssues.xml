@@ -18,6 +18,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$USER_HOME$/.gradle/caches/transforms-2/files-2.1/3af62517e8a49b59be2f9572abd847d8/play-services-ads-lite-18.3.0/jars/classes.jar!/com/google/android/gms/ads/AdRequest.class">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/build.gradle">
           <value>
             <set />
@@ -34,6 +39,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/dexterai/sightable/MainActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/dexterai/sightable/ui/camera/CameraFragment.java">
           <value>
             <set />
           </value>
@@ -58,7 +68,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout-v28/fragment_camera.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/layout/activity_login.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/fragment_camera.xml">
           <value>
             <set />
           </value>
