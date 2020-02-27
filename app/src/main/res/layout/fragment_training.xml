@@ -12,10 +12,12 @@
         android:layout_weight="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"/>
+        app:layout_constraintVertical_bias="0.0">
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/textViewName"
@@ -29,14 +31,14 @@
         app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/camera_preview"
-        app:layout_constraintVertical_bias="0.74" />
+        app:layout_constraintVertical_bias="0.73" />
 
     <TextView
         android:id="@+id/textViewCountdown"
         android:layout_width="340dp"
         android:layout_height="338dp"
         android:textAlignment="center"
-        android:textColor="#86E8EAF6"
+        android:textColor="#8B961FFF"
         android:textSize="200sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,6 +47,7 @@
         app:layout_constraintVertical_bias="0.39" />
 
     <com.google.android.material.textfield.TextInputLayout
+        app:endIconMode="clear_text"
         android:id="@+id/textInputLayoutSamples"
         android:layout_width="140dp"
         android:layout_height="38dp"
@@ -52,7 +55,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textViewSamples"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.81">
+        app:layout_constraintVertical_bias="0.8">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/TextInputSamples"
@@ -66,6 +69,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        app:endIconMode="clear_text"
         android:id="@+id/textInputLayoutName"
         android:layout_width="226dp"
         android:layout_height="37dp"
@@ -73,7 +77,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textViewName"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.74">
+        app:layout_constraintVertical_bias="0.73">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/TextInputName"
@@ -83,7 +87,8 @@
             android:hint="@string/hint_text_input_object_name"
             android:inputType="textPersonName"
             android:singleLine="true"
-            android:textColor="#D32F2F" />
+            android:textColor="#D32F2F"
+            tools:text="@tools:sample/first_names" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -92,6 +97,7 @@
         style="@android:style/Widget.Material.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
+        android:elevation="100dp"
         android:text="Take Picture"
         android:textColorHighlight="#FF5252"
         android:textColorLink="#69F0AE"
@@ -108,6 +114,7 @@
         style="@android:style/Widget.Material.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
+        android:elevation="100dp"
         android:text="Train"
         android:textColorHighlight="#CDDC39"
         android:textColorLink="#69F0AE"
@@ -134,7 +141,7 @@
         app:layout_constraintHorizontal_bias="0.7"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.88" />
+        app:layout_constraintVertical_bias="0.87" />
 
     <TextView
         android:id="@+id/textViewInterval"
@@ -162,7 +169,7 @@
         app:layout_constraintHorizontal_bias="0.12"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.81" />
+        app:layout_constraintVertical_bias="0.8" />
 
     <TextView
         android:id="@+id/textViewInterval1"
