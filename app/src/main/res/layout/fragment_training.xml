@@ -5,6 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <RelativeLayout
+        android:id="@+id/rr2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="5sp"
+        android:gravity="center">
+    </RelativeLayout>
+
     <FrameLayout
         android:id="@+id/camera_preview"
         android:layout_width="0dp"
@@ -19,16 +27,31 @@
 
     </FrameLayout>
 
+    <ImageView
+        android:id="@+id/captured_image"
+        android:layout_width="280sp"
+        android:layout_height="180sp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/image_view_border"
+        android:cropToPadding="true"
+        android:elevation="8sp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.29000002" />
+
     <TextView
         android:id="@+id/textViewName"
-        android:layout_width="53dp"
-        android:layout_height="26dp"
+        android:layout_width="50dp"
+        android:layout_height="27dp"
         android:text="@string/name_object"
         android:textColor="#F50057"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/camera_preview"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintHorizontal_bias="0.09"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/camera_preview"
         app:layout_constraintVertical_bias="0.73" />
@@ -37,6 +60,8 @@
         android:id="@+id/textViewCountdown"
         android:layout_width="340dp"
         android:layout_height="338dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:textAlignment="center"
         android:textColor="#8B961FFF"
         android:textSize="200sp"
@@ -186,7 +211,7 @@
         android:typeface="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintHorizontal_bias="0.09"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/camera_preview"
         app:layout_constraintVertical_bias="0.87" />
