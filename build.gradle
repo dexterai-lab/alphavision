@@ -8,7 +8,7 @@ buildscript {
         
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:3.6.1'
         classpath 'de.undercouch:gradle-download-task:3.4.3'
         classpath 'com.google.gms:google-services:4.3.3'
         
@@ -22,6 +22,7 @@ allprojects {
         google()
         jcenter()
         mavenLocal()
+        maven { url "https://jitpack.io" }
     }
 }
 

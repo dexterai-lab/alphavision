@@ -1,4 +1,4 @@
-package com.dexterai.sightable.ui.slideshow;
+package com.dexterai.sightable.ui.facerecognition;
 
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -18,19 +18,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.dexterai.sightable.ImageSurfaceView;
 import com.dexterai.sightable.R;
 
-public class SlideshowFragment extends Fragment {
+public class FaceRecognitionFragment extends Fragment {
 
     private ImageSurfaceView mImageSurfaceView;
     private Camera camera;
@@ -46,7 +42,7 @@ public class SlideshowFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_slideshow, container, false);
+        View root = inflater.inflate(R.layout.fragment_facerecognition, container, false);
 
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
