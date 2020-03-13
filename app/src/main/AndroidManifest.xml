@@ -48,7 +48,7 @@
         <activity
             android:name="com.dexterai.sightable.DetectorActivity"
             android:parentActivityName="com.dexterai.sightable.MainActivity"
-            android:label="@string/menu_home"
+            android:label="@string/menu_detect"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait">
         </activity>

@@ -26,7 +26,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -38,7 +37,6 @@ import androidx.fragment.app.Fragment;
 
 import com.dexterai.sightable.ImageSurfaceView;
 import com.dexterai.sightable.R;
-import com.dexterai.sightable.ui.slideshow.SlideshowFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;

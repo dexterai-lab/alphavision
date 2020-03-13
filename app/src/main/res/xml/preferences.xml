@@ -1,41 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Basic Settings">
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="Basic Settings">
+
+        <Preference
+            android:key="preference"
+            android:title="@string/title_basic_preference"
+            android:summary="Baic pref summary"/>
+
+
+        <Preference
+            android:key="icon"
+            android:title="Camera"
+            android:summary="Camera Summary"
+            android:icon="@android:drawable/ic_menu_camera"/>
+
+        <Preference
+            android:key="single_line_title"
+            android:title="Title pref"
+            android:summary="Title pref summary"
+            app:singleLineTitle="true"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Widgets">
+
         <CheckBoxPreference
             android:key="checkbox"
-            android:summary="Tap to check if on or off"
-            android:title="Automatic Photo" />
-    <RingtonePreference
-        android:key="ringtone"
-        android:showDefault="true"
-        android:showSilent="true"
-        android:summary="Pick a ringtone you like"
-        android:title="Ringtone Preference" />
-    <EditTextPreference
-        android:dialogTitle="Enter a text"
-        android:key="text"
-        android:summary="Click to show a text entry dialog"
-        android:title="EditText Preference" />
-    <ListPreference
-        android:dialogTitle="Select duration"
-        android:entries="@array/settings_list_preference_titles"
-        android:entryValues="@array/settings_list_preference_values"
-        android:key="list"
-        android:summary="Click to show a list to choose from"
-        android:title="List Preference" />
-    <SwitchPreference
-        android:key="switch"
-        android:title="Switch Preference"
-        android:summary="Click to switch on or off"
-        android:defaultValue="true"/>
-    </PreferenceCategory>
-    <PreferenceCategory android:title="Advanced Settings">
-        <ListPreference
-            android:dialogTitle="Select duration"
+            android:title="title_checkbox_preference"
+            android:summary="summary_checkbox_preference"/>
+
+        <SwitchPreferenceCompat
+            android:key="switch"
+            android:title="Auto photo mode"
+            android:summary="Turn this ON to automatically take pictures in intervals"/>
+
+        <DropDownPreference
+            android:key="dropdown"
+            android:title="title_dropdown_preference"
             android:entries="@array/settings_list_preference_titles"
-            android:entryValues="@array/settings_list_preference_values"
-            android:key="list"
-            android:summary="Click to show a list to choose from"
-            android:title="List Preference"/>
+            app:useSimpleSummaryProvider="true"
+            android:entryValues="@array/settings_list_preference_values"/>
+
+        <SeekBarPreference
+            android:defaultValue="5"
+            android:key="seekbar"
+            android:max="5"
+            android:title="title_seekbar_preference" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="advanced"
+        android:title="Advanced Settings"
+        app:initialExpandedChildrenCount="1">
+
+        <Preference
+            android:key="expandable"
+            android:title="Training parameters"
+            android:summary="More advanced training parameters"/>
+
+        <Preference
+            android:title="title_intent_preference"
+            android:summary="summary_intent_preference">
+
+            <intent android:action="android.intent.action.VIEW"
+                android:data="http://www.android.com"/>
+
+        </Preference>
+
+        <SwitchPreferenceCompat
+            android:key="parent"
+            android:title="title_parent_preference"
+            android:summary="summary_parent_preference"/>
+
+        <SwitchPreferenceCompat
+            android:key="child"
+            android:dependency="parent"
+            android:title="title_child_preference"
+            android:summary="summary_child_preference"/>
+
+        <SwitchPreferenceCompat
+            android:key="toggle_summary"
+            android:title="title_toggle_summary_preference"
+            android:summaryOn="summary_on_toggle_summary_preference"
+            android:summaryOff="summary_off_toggle_summary_preference"/>
+
+        <Preference
+            android:key="copyable"
+            android:title="title_copyable_preference"
+            android:summary="summary_copyable_preference"
+            android:selectable="false"
+            app:enableCopying="true"/>
+    </PreferenceCategory>
+
 </PreferenceScreen>
