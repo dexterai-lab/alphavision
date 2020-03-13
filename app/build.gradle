@@ -45,6 +45,8 @@ project.ext.TMP_DIR   = project.buildDir.toString() + '/downloads'
 apply from:'download_model.gradle'
 
 dependencies {
+    def preference_version = "1.1.0"
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -66,6 +68,7 @@ dependencies {
     implementation 'com.twitter.sdk.android:twitter-core:3.3.0'
     implementation 'com.google.firebase:firebase-storage:19.1.1'
     implementation 'com.google.firebase:firebase-ads:18.3.0'
+    implementation "androidx.preference:preference:$preference_version"
 
 
 }

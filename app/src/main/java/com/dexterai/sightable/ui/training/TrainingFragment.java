@@ -4,7 +4,11 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,11 +17,17 @@ import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Display;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,8 +36,9 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.dexterai.sightable.CameraHelper;
+import com.dexterai.sightable.ImageSurfaceView;
 import com.dexterai.sightable.R;
+import com.dexterai.sightable.ui.slideshow.SlideshowFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
@@ -60,8 +71,12 @@ public class TrainingFragment extends Fragment {
     protected int TIMER_INTERVAL = 1000;
     private int sum_progress = 1;
     private Camera mCamera;
-    private CameraHelper.CameraPreview mCameraPreview;
+    private ImageSurfaceView mImageSurfaceView;
+    private RelativeLayout rl;
+    private ImageView capturedImageHolder;
+    int imageL,imageT,imageW,imageH,width,height,dpsize;
 
+    Bitmap resizedBitmap;
     private ArrayList<Uri> ImageList = new ArrayList<Uri>();
 
     //Firebase
@@ -77,6 +92,7 @@ public class TrainingFragment extends Fragment {
         Log.i(TAG, "Show camera button pressed. Checking permission.");
 
         View root = inflater.inflate(R.layout.fragment_training, container, false);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // Check if the Camera permission is already available.
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
@@ -99,16 +115,29 @@ public class TrainingFragment extends Fragment {
             textInputSamples =  (TextInputEditText) root.findViewById(R.id.TextInputSamples);
             buttonTakepic = (Button) root.findViewById(R.id.buttonTakepic);
             buttonTrain = (Button) root.findViewById(R.id.buttonTrain);
-
+            capturedImageHolder = (ImageView)root.findViewById(R.id.captured_image);
+            rl = root.findViewById(R.id.rr2);
             buttonTrain.setEnabled(false);
 
             //Get Firebase References
             storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
 
+            //Get Display dimensions
+            Display display = getActivity().getWindowManager().getDefaultDisplay();
+            width= display.getWidth();
+            height= display.getHeight();
+
             mCamera = getCameraInstance();
-            mCameraPreview = new CameraHelper.CameraPreview(getParentFragment().getContext(), mCamera);
-            preview.addView(mCameraPreview);
+            mImageSurfaceView = new ImageSurfaceView(getContext(), mCamera);
+            preview.addView(mImageSurfaceView);
+
+            dpsize = (int) (getResources().getDimension(R.dimen._150sdp));
+//            capturedImageHolder.setX((width-dpsize)/2);
+//            capturedImageHolder.setY((height -dpsize)/2);
+
+            imageL= (int) capturedImageHolder.getX();
+            imageT= (int) capturedImageHolder.getY();
 
 //            textViewInterval.setText(seekBar.getProgress());
             textViewInterval.setText(" " + (seekBar.getProgress()+1) + "s" );
@@ -163,8 +192,9 @@ public class TrainingFragment extends Fragment {
 
                                     @Override
                                     public void onFinish() {
-                                        mCamera.startPreview();
                                         textViewCountdown.setVisibility(View.INVISIBLE);
+                                        //TODO: This called earlier than the onTick is finished and hence fails
+                                        mCamera.startPreview();
                                     }
 
                                     @Override
@@ -219,6 +249,9 @@ public class TrainingFragment extends Fragment {
                     uploadTrainingData();
                 }
             });
+
+            capturedImageHolder.setOnTouchListener(new MoveViewTouchListener(capturedImageHolder));
+
         }
         return root;
     }
@@ -240,16 +273,59 @@ public class TrainingFragment extends Fragment {
         return camera;
     }
 
+    public void resetCamera()
+    {
+        if(mCamera!=null) {
+            mCamera.release();
+
+        }
+    }
+
     Camera.PictureCallback mPicture = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
+            Bitmap b = BitmapFactory.decodeByteArray(data, 0, data.length);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            final int REQUIRED_SIZE = 8192; //8MB SIZE
+            int scale = 1;
+            int wd= b.getWidth();
+            while (wd >=( REQUIRED_SIZE)) {
+                wd= wd/2;
+                scale *= 2;
+            }
+            options.inSampleSize = scale;
+            options.inJustDecodeBounds = false;
+            Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length,options);
+
+            if(bitmap==null){
+                Toast.makeText(getActivity(), "Captured image is empty", Toast.LENGTH_LONG).show();
+                return;
+            }
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+            bitmap= Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,false);
+            int bh= bitmap.getHeight();
+            int bw= bitmap.getWidth();
+            width= rl.getWidth();
+            height= rl.getHeight();
+
+            int l = imageL*bw/width;
+            int t = imageT*bh/height;
+            int w = capturedImageHolder.getWidth()*bw/width;
+            int h = capturedImageHolder.getHeight()*bh/height;
+
+            resizedBitmap= Bitmap.createBitmap(bitmap,l,t,w,h);
+
+
             File pictureFile = getOutputMediaFile();
             if (pictureFile == null) {
                 return;
             }
             try {
                 FileOutputStream fos = new FileOutputStream(pictureFile);
-                fos.write(data);
+                resizedBitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
+                fos.flush();
                 fos.close();
             } catch (FileNotFoundException e) {
 
@@ -258,6 +334,63 @@ public class TrainingFragment extends Fragment {
         }
 
     };
+
+    public class MoveViewTouchListener
+            implements View.OnTouchListener
+    {
+        private GestureDetector mGestureDetector;
+        private View mView;
+
+
+        public MoveViewTouchListener(View view)
+        {
+            mGestureDetector = new GestureDetector(view.getContext(), mGestureListener);
+            mView = view;
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event)
+        {
+            return mGestureDetector.onTouchEvent(event);
+        }
+
+        private GestureDetector.OnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener()
+        {
+            private float mMotionDownX, mMotionDownY;
+
+            @Override
+            public boolean onDown(MotionEvent e)
+            {
+                mMotionDownX = e.getRawX() - mView.getTranslationX();
+                mMotionDownY = e.getRawY() - mView.getTranslationY();
+                imageL= (int) mView.getX();
+                imageT= (int) mView.getY();
+                Log.d("imageview"," down");
+                return true;
+            }
+
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY)
+            {
+                mView.setTranslationX(e2.getRawX() - mMotionDownX);
+                mView.setTranslationY(e2.getRawY() - mMotionDownY);
+                imageL= (int) mView.getX();
+                imageT= (int) mView.getY();
+                if((distanceX==0)&&(distanceY==0))
+                {
+                    Log.d("imageview"," zoomed");
+                }
+
+                return true;
+            }
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                Log.d("imageview"," tapped");
+                return true;
+            }
+
+        };
+    }
 
 
     // validating name
@@ -287,7 +420,7 @@ public class TrainingFragment extends Fragment {
                 .format(new Date());
         File mediaFile;
         mediaFile = new File(mediaStorageDir.getPath() + File.separator
-                + "IMG_" + textInputName.getText() + "_" + timeStamp + ".jpg");
+                + "IMG_" + textInputName.getText().toString().toLowerCase() + "_" + timeStamp + ".jpg");
         Log.d("TrainingFragment", "Media storage filename is: " + mediaFile);
 
         return mediaFile;
@@ -313,7 +446,7 @@ public class TrainingFragment extends Fragment {
 
             for(upload_count=0; upload_count < ImageList.size(); upload_count++){
                 Uri IndividualImage = ImageList.get(upload_count);
-                StorageReference ImageName = storageReference.child("images/"+ textInputName.getText() + "/" +IndividualImage.getLastPathSegment());
+                StorageReference ImageName = storageReference.child("images/"+ (textInputName.getText().toString().toLowerCase()) + "/" +IndividualImage.getLastPathSegment());
                 ImageName.putFile(IndividualImage)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -351,7 +484,7 @@ public class TrainingFragment extends Fragment {
             // For example if the user has previously denied the permission.
             Log.i(TAG,
                     "Displaying camera permission rationale to provide additional context.");
-            FrameLayout preview = (FrameLayout)  mCameraPreview.findViewById(R.id.camera_preview);
+            FrameLayout preview = (FrameLayout)  mImageSurfaceView.findViewById(R.id.camera_preview);
 
             Snackbar.make(preview , R.string.permission_camera_rationale,
                     Snackbar.LENGTH_INDEFINITE)
